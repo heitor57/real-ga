@@ -292,6 +292,6 @@ for index, row in df.iterrows():
     i+=1
 
 print(Colors.RESET,end='')
-fout = open(DIRS['DATA_DIR']+get_parameters_name(parameters_values),'w')
+fout = open(DIRS['DATA_DIR']+get_parameters_name(parameters_values)+'.json','w')
 fout.write(df.to_json(orient='records',lines=False))
 fout.close()
