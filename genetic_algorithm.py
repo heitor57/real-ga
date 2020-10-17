@@ -1,12 +1,16 @@
 # coding: utf-8
 import math
 import random
+import argparse
+
 import numpy as np
 import pandas as pd
+
 from utils import dict_to_list, get_parameters_name
 from constants import *
+from Individual import *
+from selection import *
 
-import argparse
 parser = argparse.ArgumentParser()
 
 for param in parameters_pretty_name.keys():
@@ -84,126 +88,18 @@ parameters_values = {
 parameters = {key: val for key, val in zip(parameters_pretty_name.values(),parameters_values.values())}
 
 # information to catch from algorithm
-def func_obj(x):
-    n = float(len(x))
-    f_exp = -0.2 * math.sqrt(1/n * sum(np.power(x, 2)))
-
-    t = 0
-    for i in range(0, len(x)):
-            t += np.cos(2 * math.pi * x[i])
-
-    s_exp = 1/n * t
-    f = -20 * math.exp(f_exp) - math.exp(s_exp) + 20 + math.exp(1)
-
-    return f
-
-def bin_to_int(binary):
-    res = 0
-    for i in range(num_bits):
-        res += 2**i*int(binary[i])
-    return res
-
-def interval_values(binary):
-    return x_min+((x_max-x_min)/(2**num_bits-1))*bin_to_int(binary)
-
-def random_binary():
-    string = ''
-    for i in range(num_bits):
-        string += str(random.randint(0,1))
-    return string
-
-class Individual:
-    def __init__(self,genome=[]):
-        self.genome = genome
-        self.fo = None
-        pass
-    def rand_genome(self):
-        self.genome = []
-        for i in range(num_genes):
-            self.genome.append(random_binary())
-        return self.genome
-
-    def genome_to_int_list(self):
-        return list(map(interval_values,self.genome))
-    
-    def calc_fo(self):
-        # if self.fo is None:
-        self.fo = func_obj(self.genome_to_int_list())
-        return self.fo
-
-    def string_to_genome_list(self,genome_string):
-        genome = []
-        for i in range(num_genes):
-            genome.append(genome_string[i*num_bits:(i+1)*num_bits])
-        return genome
-
-    def crossover(self,ind):
-        idx = random.randint(1,total_genes_size-2)
-        flat_genome_1 = ''.join(self.genome)
-        flat_genome_2 = ''.join(ind.genome)
-        new_genome = flat_genome_1[:idx+1]
-        new_genome += flat_genome_2[idx+1:]
-        new_genome = self.string_to_genome_list(new_genome)
-        new_ind1 = Individual(new_genome)
-
-        new_genome = flat_genome_2[idx+1:]
-        new_genome += flat_genome_1[:idx+1]
-        new_genome = self.string_to_genome_list(new_genome)
-        new_ind2 = Individual(new_genome)
-        return new_ind1, new_ind2
-
-    def mutate(self,p):
-        mutate_any = False
-        for i in range(num_genes):
-            new_gene = ""
-            for j in range(num_bits):
-                going_to_mutate = False if random.uniform(0,1)<=p else True
-                if going_to_mutate:
-                    new_gene += '0' if self.genome[i][j] == '1' else '1'
-                    mutate_any = True
-                else:
-                    new_gene += self.genome[i][j]
-            self.genome[i] = new_gene
-        if mutate_any:
-            self.calc_fo()
-        
-    def __str__(self):
-        return 'genome = '+''.join(self.genome) + f' {self.genome_to_int_list()} , fo = {self.fo}'
-
-def tournament(population):
-    fathers = []
-
-    for i in range(2):
-        inds = []
-        for j in range(2):
-            inds.append(random.randint(0,num_pop-1))
-        ind = None
-        get_winner = np.random.rand() <= winner_prob
-        if population[inds[0]].calc_fo() < population[inds[1]].calc_fo():
-            ind = population[inds[0]]
-            if not get_winner:
-                ind = population[inds[1]]
-        else:
-            ind = population[inds[1]]
-            if not get_winner:
-                ind = population[inds[0]]
-                    
-        fathers.append(ind)
-    return fathers
-
-
-#num_pop,num_genes*num_bits
 
 def sort_population(population):
-    return sorted(population,key = lambda x: x.fo,reverse=False)
+    return sorted(population,key = lambda x: x.ofv,reverse=False)
+
+objective = Objective()
 
 population = []
 for i in range(num_pop):
     ind = Individual()
     ind.rand_genome()
     population.append(ind)
-    ind.calc_fo()
-    # print(ind)
+    objective.compute(ind)
 
 population= sort_population(population)
 best_ind = population[0]
@@ -212,16 +108,23 @@ best_ind = population[0]
 df = pd.DataFrame([],columns = columns)
 df = df.set_index(columns[0])
 
-df.loc[1] = [', '.join(best_ind.genome), ', '.join(map(lambda x: f'{x:.4}',best_ind.genome_to_int_list())), f'{best_ind.fo:.4}']
+cross_policy = BLXa()
+
+df.loc[1] = [', '.join(best_ind.genome), ', '.join(map(lambda x: f'{x:.4}',best_ind.genome_to_int_list())), f'{best_ind.ofv:.4}']
+
+
+mutation_policy = UniformRandomSolutionSpace()
 for i in range(2,num_generations+1):
     new_population = []
     # Cross
     choices = list(range(len(population)))
+    selection_policy=Roulette(population)
     for j in range(num_cross):
-        ind1, ind2 = tournament(population)
-        nind1, nind2 = ind1.crossover(ind2)
-        nind1.calc_fo()
-        nind2.calc_fo()
+        ind1=selection_policy.select(population)
+        ind2=selection_policy.select(population)
+        nind1, nind2 = cross_policy.cross(ind1,ind2)
+        objective.compute(nind1)
+        objective.compute(nind2)
         new_population.append(nind1)
         new_population.append(nind2)
     # Select the rest left of individuals if the cross rate is not 100%
@@ -239,7 +142,7 @@ for i in range(2,num_generations+1):
 
     candidates_to_substitution = list(range(0,num_pop))
     for ind in range(num_elitists):
-        # if new_population[num_pop-ind-1].fo > population[ind].fo:
+        # if new_population[num_pop-ind-1].ofv > population[ind].ofv:
         ind_to_sub = random.choice(candidates_to_substitution)
         new_population[ind_to_sub] = population[ind]
         candidates_to_substitution.remove(ind_to_sub)
@@ -248,7 +151,7 @@ for i in range(2,num_generations+1):
 
     population = new_population
     best_ind = population[0]
-    df.loc[i] = [', '.join(best_ind.genome), ', '.join(map(lambda x: f'{x:.2}',best_ind.genome_to_int_list())), f'{best_ind.fo:.2}']
+    df.loc[i] = [', '.join(best_ind.genome), ', '.join(map(lambda x: f'{x:.2}',best_ind.genome_to_int_list())), f'{best_ind.ofv:.2}']
 df = df.reset_index()
 
 # PRINT TABLE BLOCK

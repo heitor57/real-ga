@@ -49,7 +49,6 @@ MUTATION_RATE = 0.01 # Probability to cause a change in a bit of a gene of any i
 MUTATEDS_RATE = 1.0 # Rate of the population to be mutated - default to 1.0
 MAINTAIN_WINNER_PROBABILITY = 0.9 # Probability to maintain the winner when getting parents
 
-
 # Execution parameters
 
 num_executions = 10
