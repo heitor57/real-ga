@@ -1,0 +1,51 @@
+\begin{thebibliography}{1}
+
+\bibitem{goldenberg1989genetic}
+David~E Goldenberg.
+\newblock Genetic algorithms in search, optimization and machine learning,
+  1989.
+
+\bibitem{gong2004quadtree}
+Minglun Gong and Yee-Hong Yang.
+\newblock Quadtree-based genetic algorithm and its applications to computer
+  vision.
+\newblock {\em Pattern Recognition}, 37(8):1723--1733, 2004.
+
+\bibitem{lee2007multi}
+Loo~Hay Lee, Chul~Ung Lee, and Yen~Ping Tan.
+\newblock A multi-objective genetic algorithm for robust flight scheduling
+  using simulation.
+\newblock {\em European Journal of Operational Research}, 177(3):1948--1968,
+  2007.
+
+\bibitem{naruchitparames2011friend}
+Jeff Naruchitparames, Mehmet~Hadi G{\"u}ne{\c{s}}, and Sushil~J Louis.
+\newblock Friend recommendations in social networks using genetic algorithms
+  and network topology.
+\newblock In {\em 2011 IEEE Congress of Evolutionary Computation (CEC)}, pages
+  2207--2214. IEEE, 2011.
+
+\bibitem{silva2010graph}
+Nitai~B Silva, Ren Tsang, George~DC Cavalcanti, and Jyh Tsang.
+\newblock A graph-based friend recommendation system using genetic algorithm.
+\newblock In {\em IEEE congress on evolutionary computation}, pages 1--7. IEEE,
+  2010.
+
+\bibitem{vrajitoru1998crossover}
+Dana Vrajitoru.
+\newblock Crossover improvement for the genetic algorithm in information
+  retrieval.
+\newblock {\em Information processing \& management}, 34(4):405--415, 1998.
+
+\bibitem{whitley94_genet_algor_tutor}
+Darrell Whitley.
+\newblock A genetic algorithm tutorial.
+\newblock {\em Statistics and Computing}, 4(2):nil, 1994.
+
+\bibitem{yakoubi2016path}
+Mohamed~Amine Yakoubi and Mohamed~Tayeb Laskri.
+\newblock The path planning of cleaner robot for coverage region using genetic
+  algorithms.
+\newblock {\em Journal of innovation in digital ecosystems}, 3(1):37--43, 2016.
+
+\end{thebibliography}
