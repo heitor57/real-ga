@@ -84,10 +84,11 @@ for i in range(2,num_generations+1):
     # Select best individual from previous population - Elitism
     new_population[random.randint(0,len(new_population)-1)]=best_ind.__copy__()
     population = new_population
-    best_ind = population[0]
 
     for ind in population:
         objective.compute(ind)
+
+    best_ind = population[np.argmin([ind.ofv for ind in population])]
 
     df.loc[i] = [','.join(map(lambda x: f'{x:.5f}',best_ind.genome)), f'{best_ind.ofv:.4}',np.mean([ind.ofv for ind in population])]
 df = df.reset_index()
@@ -102,7 +103,6 @@ max_size = max(map(len,parameters_print.keys()))
 max_size_val = max(map(len,map(str,parameters_print.values())))
 
 print(Colors.DARK,end='')
-# print(Symbols.HOR*(max_size+max_size_val+1)+Symbols.RTOP)
 
 for key, value in parameters_print.items():
     print(Colors.Backgrounds.MAGENTA+key+' '*(max_size-len(key)),
@@ -111,13 +111,9 @@ SPACED_STR = '   '
 for i, col in enumerate(columns):
     col =SPACED_STR + col + SPACED_STR
     print(COLORS[i],end='')
-    # curses.init_pair(i+1, curses.COLOR_BLACK, COLORS[i])
     if i != 0:
         print(col,end='')
-
-        # stdscr.addstr(1, np.sum(column_names_size), col, curses.color_pair(i+1))
     else:
-        # stdscr.addstr(1, 0, col, curses.color_pair(i+1))
         print(col,end='')
     print(Colors.RESET_BACKGROUND,end='')
     column_names_size.append(len(col))
