@@ -1,6 +1,8 @@
+import math
+import numpy as np
 class Objective:
     def compute(self,ind):
-        f=_compute(ind.genome)
+        f=self._compute(ind.genome)
         ind.ofv = f
         return f
 

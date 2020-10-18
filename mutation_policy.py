@@ -8,6 +8,10 @@ class UniformRandomSolutionSpace(MutationPolicy):
         self.min_value = min_value
         self.max_value = max_value
     
-    def mutate(ind):
-        new_genome = [random.uniform(self.min_value,self.max_value) if probability <= random.random() else i for i in range(len(ind.genome))]
+    def mutate(self,ind):
+        new_genome = [random.uniform(self.min_value,self.max_value)
+                      if self.probability > random.random()
+                      else
+                      i
+                      for i in ind.genome]
         ind.genome = new_genome

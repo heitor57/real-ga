@@ -28,6 +28,7 @@ class Tournament(SelectionPolicy):
 
 class Roulette(SelectionPolicy):
     def select(self):
+        population=self.population
         ofvs = np.array([1/ind.ofv for ind in population])
         probabilities = ofvs/np.sum(ofvs)
         r = np.random.random()
@@ -37,6 +38,7 @@ class Roulette(SelectionPolicy):
             cumulated += p
             if cumulated >= r:
                 chosen_ind = ind
+                break
         return chosen_ind
             
     
