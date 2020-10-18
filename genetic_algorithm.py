@@ -82,7 +82,8 @@ for i in range(2,num_generations+1):
         mutation_policy.mutate(new_population[j])
 
     # Select best individual from previous population - Elitism
-    new_population[random.randint(0,len(new_population)-1)]=best_ind.__copy__()
+    if elitism:
+        new_population[random.randint(0,len(new_population)-1)]=best_ind.__copy__()
     population = new_population
 
     for ind in population:
