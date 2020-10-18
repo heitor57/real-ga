@@ -119,10 +119,7 @@ for i, col in enumerate(columns):
     print(Colors.RESET_BACKGROUND,end='')
     column_names_size.append(len(col))
 print()
-i=2
-
 for index, row in df.iterrows():
-    # string = ''.join(row.T.to_list())
     print(Colors.Backgrounds.WHITE,end='')
     for j, item in enumerate(row.T.to_list()):
         item = str(item)
@@ -131,7 +128,6 @@ for index, row in df.iterrows():
         print(" "*(len(columns[j]+SPACED_STR*2)-size),end='')
         
     print(Colors.RESET_BACKGROUND)
-    i+=1
 
 print(Colors.RESET,end='')
 fout = open(DIRS['DATA_DIR']+get_parameters_name({k: v['value'] for k,v in parameters.items()})+'.json','w')
