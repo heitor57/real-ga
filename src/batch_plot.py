@@ -25,7 +25,7 @@ parameters_values = {
 }
 bckp = parameters_values.copy()
 
-fo_values = np.zeros(num_executions)
+fo_values = np.zeros(NUM_EXECUTIONS)
 
 args = range(1,41,4)
 num_args = len(args)
@@ -36,7 +36,7 @@ for i,arg in enumerate(args):
     parameters_values['num_generations'] = arg
     
     for k, j in enumerate(multiple_run_range):
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         parameters_values['eid'] = j
         name = get_parameters_name(parameters_values)
         df = pd.read_json(DATA+name)
@@ -66,7 +66,7 @@ for i,arg in enumerate(args):
     parameters_values['num_pop'] = arg
     
     for k, j in enumerate(multiple_run_range):
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         parameters_values['eid'] = j
         name = get_parameters_name(parameters_values)
         df = pd.read_json(DATA+name)
@@ -96,7 +96,7 @@ for i,arg in enumerate(args):
     parameters_values['num_bits'] = arg
     
     for k, j in enumerate(multiple_run_range):
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         parameters_values['eid'] = j
         name = get_parameters_name(parameters_values)
         df = pd.read_json(DATA+name)
@@ -125,7 +125,7 @@ for i,arg in enumerate(args):
     parameters_values['num_genes'] = arg
     
     for k, j in enumerate(multiple_run_range):
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         parameters_values['eid'] = j
         name = get_parameters_name(parameters_values)
         df = pd.read_json(DATA+name)
@@ -154,7 +154,7 @@ for i,arg in enumerate(args):
     parameters_values['cross_rate'] = arg
     
     for k, j in enumerate(multiple_run_range):
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         parameters_values['eid'] = j
         name = get_parameters_name(parameters_values)
         df = pd.read_json(DATA+name)
@@ -184,7 +184,7 @@ for i,arg in enumerate(args):
     parameters_values['mutation_rate'] = arg
     
     for k, j in enumerate(multiple_run_range):
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         parameters_values['eid'] = j
         name = get_parameters_name(parameters_values)
         df = pd.read_json(DATA+name)

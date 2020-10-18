@@ -13,7 +13,7 @@ num_args = len(args)
 for i,arg in enumerate(args):
     print(f'[{i+1}/{num_args}]')
     for j in multiple_run_range:
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         os.system(f'python genetic_algorithm.py --num_generations {arg} --eid {j}')
 
 args = range(1,201,10)
@@ -21,7 +21,7 @@ num_args = len(args)
 for i,arg in enumerate(args):
     print(f'[{i+1}/{num_args}]')
     for j in multiple_run_range:
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         os.system(f'python genetic_algorithm.py --num_pop {arg} --eid {j}')
 
 args = range(4,64,6)
@@ -29,7 +29,7 @@ num_args = len(args)
 for i,arg in enumerate(args):
     print(f'[{i+1}/{num_args}]')
     for j in multiple_run_range:
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         os.system(f'python genetic_algorithm.py --num_bits {arg} --eid {j}')
 
 
@@ -38,7 +38,7 @@ num_args = len(args)
 for i,arg in enumerate(args):
     print(f'[{i+1}/{num_args}]')
     for j in multiple_run_range:
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         os.system(f'python genetic_algorithm.py --num_genes {arg} --eid {j}')
 
 args = np.linspace(0.2,1,6)
@@ -46,7 +46,7 @@ num_args = len(args)
 for i,arg in enumerate(args):
     print(f'[{i+1}/{num_args}]')
     for j in multiple_run_range:
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         os.system(f'python genetic_algorithm.py --cross_rate {arg} --eid {j}')
 
 
@@ -55,7 +55,7 @@ num_args = len(args)
 for i,arg in enumerate(args):
     print(f'[{i+1}/{num_args}]')
     for j in multiple_run_range:
-        print(f'\t [{j}/{num_executions}]')
+        print(f'\t [{j}/{NUM_EXECUTIONS}]')
         os.system(f'python genetic_algorithm.py --mutation_rate {arg} --eid {j}')
 
 bits = [25]

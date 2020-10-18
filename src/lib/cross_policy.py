@@ -1,5 +1,6 @@
 import numpy as np
-from Individual import *
+from .Individual import *
+
 class CrossPolicy:
     pass
 

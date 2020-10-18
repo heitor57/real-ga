@@ -7,13 +7,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from utils import *
-from constants import *
-from Individual import *
-from Objective import *
-from selection_policy import *
-from mutation_policy import *
-from cross_policy import *
+from lib import *
 
 import traceback
 import warnings

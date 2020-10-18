@@ -30,5 +30,5 @@ columns = ['#Generation','Best genome','Best fitness','Mean fitness']
 
 # Execution parameters
 
-num_executions = 10
-multiple_run_range = range(1,num_executions+1)
+
+NUM_EXECUTIONS = 10
