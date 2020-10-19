@@ -8,7 +8,7 @@ import pandas as pd
 
 from lib.constants import *
 from lib.utils import *
-TOP_N = 10
+TOP_N = 15
 config = yaml.load(open('config.yaml'), Loader=yaml.FullLoader)
 parameters = {k: [v['default']] for k, v in config['parameters'].items()}
 to_update = {
@@ -36,13 +36,13 @@ for i,combination in enumerate(combinations):
     result_df.loc[i,'Mean fitness'] = df.iloc[-1]['Mean fitness']
     # if i == 49:
     #     break
-
+result_df['eid']=pd.to_numeric(result_df['eid'])
 print('Top best fitness')
 print(result_df.groupby(list(set(result_df.columns)-{'Best fitness','Mean fitness', 'eid'})).\
-      agg({i: ['mean','std'] for i in {'Best fitness','Mean fitness', 'eid'}}).\
+      agg({i: ['mean','median','std'] for i in {'Best fitness','Mean fitness', 'eid'}}).\
       sort_values(by=[('Best fitness','mean')],ascending=True).reset_index()[list(set(to_update.keys())-{'eid'})+['Best fitness','Mean fitness']].head(TOP_N))
 
 print('Top mean fitness')
 print(result_df.groupby(list(set(result_df.columns)-{'Best fitness','Mean fitness', 'eid'})).\
-      agg({i: ['mean','std'] for i in {'Best fitness','Mean fitness', 'eid'}}).\
+      agg({i: ['mean','median','std'] for i in {'Best fitness','Mean fitness', 'eid'}}).\
       sort_values(by=[('Mean fitness','mean')],ascending=True).reset_index()[list(set(to_update.keys())-{'eid'})+['Best fitness','Mean fitness']].head(TOP_N))
