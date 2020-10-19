@@ -18,7 +18,9 @@ config = yaml.load(open('config.yaml'), Loader=yaml.FullLoader)
 parameters = config['parameters']
 
 for k, v in parameters.items():
-    parser.add_argument('--'+k,default=v['default'],type=type(v['default']))
+    
+    parser.add_argument('--'+k,default=v['default'],
+                        type=str2bool if type(v['default']) == bool else type(v['default']))
 
 args = parser.parse_args()
 for k,v in vars(args).items():
