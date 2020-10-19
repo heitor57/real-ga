@@ -40,8 +40,8 @@ class BLXab(CrossPolicy):
         for gene1, gene2 in zip(ind1.genome,ind2.genome):
             d= abs(gene1-gene2)
             if gene1 <= gene2:
-                nind1.genome[i]=min(max(random.uniform(gene1-self.alpha*d,gene2+self.alpha*d),self.min_value),self.max_value)
-                nind2.genome[i]=min(max(random.uniform(gene1-self.alpha*d,gene2+self.alpha*d),self.min_value),self.max_value)
+                nind1.genome[i]=min(max(random.uniform(gene1-self.alpha*d,gene2+self.beta*d),self.min_value),self.max_value)
+                nind2.genome[i]=min(max(random.uniform(gene1-self.alpha*d,gene2+self.beta*d),self.min_value),self.max_value)
             else:
                 nind1.genome[i]=min(max(random.uniform(gene2-self.beta*d,gene1+self.alpha*d),self.min_value),self.max_value)
                 nind2.genome[i]=min(max(random.uniform(gene2-self.beta*d,gene1+self.alpha*d),self.min_value),self.max_value)
