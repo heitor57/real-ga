@@ -5,10 +5,10 @@ cross_policy:
     alpha: 0.75
     beta: 0.25
 general:
-  print_table: False
+  print_table: True
 parameters:
   mutation_policy:
-    default: "UniformRandomSolutionSpace"
+    default: "OneGene"
     pretty_name: "Mutation Policy"
   cross_policy:
     default: "BLXa"
@@ -16,7 +16,7 @@ parameters:
   selection_policy:
     default: "Roulette"
     pretty_name: "Selection Policy"
-  num_pop: 
+  num_pop:
     default: 50 # Population size
     pretty_name: "#Population"
   num_generations: 
