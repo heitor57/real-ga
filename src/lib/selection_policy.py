@@ -29,8 +29,13 @@ class Tournament(SelectionPolicy):
 class Roulette(SelectionPolicy):
     def __init__(self,population):
         super().__init__(population)
-        self.ofvs = np.array([1/ind.ofv for ind in self.population])
-        self.probabilities = self.ofvs/np.sum(self.ofvs)
+        ofvs = np.array([ind.ofv for ind in self.population])
+        ofvs = 1+np.max(ofvs)+np.min(ofvs)-ofvs
+        # ofvs = 1/ofvs
+        # ofvs = (ofvs-np.mean(ofvs))/np.std(ofvs)
+        # ofvs=  np.max(ofvs)+ofvs
+        # print(ofvs)
+        self.probabilities = ofvs/np.sum(ofvs)
     def select(self):
         r = np.random.random()
         cumulated = 0
@@ -41,5 +46,3 @@ class Roulette(SelectionPolicy):
                 chosen_ind = ind
                 break
         return chosen_ind
-            
-    
