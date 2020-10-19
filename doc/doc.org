@@ -110,26 +110,19 @@ Quando a taxa de cruzamento não é de 100% então indivíduos da população an
 
 Para mutação dos indivíduos foi utilizado um parâmetro de taxa de mutação que define a probabilidade de um indivíduo ser mutado. A mutação foi definida como o sorteio de um gene para ter o valor trocado através de outro sorteio de um valor dentro do intervalo $[min_{value},max_{value}]$.
 
-O elitismo foi definido como a preservação do indivíduo com maior aptidão da população anterior, ele substitui um indivíduo aleatório da nova população.
+Para garantir uma curva de convergência sem oscilação e constante busca a melhorar os valores o elitismo foi aplicado e definido como a preservação do indivíduo com maior aptidão da população anterior, ele substitui um indivíduo aleatório da nova população. 
 
+Os parâmetros mais relevantes são mostrados na tabela a seguir, através dele o algoritmo genético pode ser ajustado para obter boas soluções, fora as mudanças nos operadores de seleção (i.e., $BLX\text{-}\alpha$ e $BLX\text{-}\alpha\beta$), cruzamento e mutação (aqui, no caso, não foram estudadas outras variações).
 
-Com a mutação nos filhos o processo de elitismo é feito na população anterior, uma porcentagem de indivíduos com maior aptidao é dado como entrada e esses indivíduos vão substituir os piores indivíduos da geração atual. Foi feito a abordagem por porcentagem ao invés de somente um indíviduo para ser possível a análise da variação do parâmetro. O valor padrão foi de 5%.
-
-Foi escolhido não mutar o indivíduos da elite para gerar uma curva de convergência sem oscilação.
-
-#+CAPTION: Valores padrões para os parâmetros
-| Parâmetro                 | Valor | Descrição                                                             |
-| $x_{min}$                 |    -2 | Limite inferior do espaço discreto de busca                           |
-| $x_{max}$                 |     2 | Limite superior do espaço discreto de busca                           |
-| #População                |    50 | Quantidade de indivíduos                                              |
-| #Gerações                 |    50 | Quantidade de gerações                                                |
-| #Bits                     |     6 | Tamanho do gene em bits                                               |
-| #Genes                    |     2 | Quantidade de genes                                                   |
-| Taxa de cruzamento        |   1.0 | Taxa do número de indivíduos que vão cruzar                           |
-| Taxa de elitismo          |  0.05 | Taxa do número de indivíduos a serem preservados                      |
-| Taxa de mutados           |   1.0 | Taxa do número de indivíduos aptos a serem mutados da população total |
-| Taxa de mutação           |  0.01 | Probabilidade da mutação de um bit em um gene                         |
-| Probabilidade do vencedor |   0.9 | Probabilidade do vencedor de uma disputa ser pai                      |
+#+CAPTION: Parâmetros
+| Parâmetro                | Descrição                                                           |
+| $min_{value}$            | Limite inferior do espaço de busca                                  |
+| $max_{value}$            | Limite superior do espaço de busca                                  |
+| #População               | Quantidade de indivíduos                                            |
+| #Gerações                | Quantidade de gerações                                              |
+| Taxa de cruzamento       | Taxa do número de indivíduos que vão cruzar                         |
+| Probabilidade de mutação | Probabilidade da mutação de um indivíduo                            |
+| Elitismo                 | Se irá usar a preservação do melhor indivíduo da população anterior |
 
 
 Uma visão geral de como o algoritmo funciona é dado a seguir:
@@ -139,105 +132,37 @@ Uma visão geral de como o algoritmo funciona é dado a seguir:
   \begin{algorithmic}[1]
   \State Inicia a população com cromossomos aleatórios
   \For{$i=1$ to \#Gerações}
-  \State Cruza os indivíduos utilizando torneio para selecionar os pais e de acordo com a taxa de cruzamento
-  \State Completa o número de índivíduos com os melhores indivíduos da população anterior caso a taxa de cruzamento não seja de 100\%
-  \State Faz a mutação dos indivíduos da população atual de acordo com a taxa de mutados e de mutação
-  \State Seleciona os melhores indivíduos da população anterior de acordo com a taxa de elitismo e cada um deles substitui um indíviduo aleatório da geração corrente
+  \State Cruza os indivíduos utilizando a roleta para selecionar os pais e de acordo com a taxa de cruzamento
+  \State Completa o número de índivíduos com indivíduos aleatórios da população anterior caso a taxa de cruzamento não seja de 100\%
+  \State Faz a mutação dos indivíduos da população atual de acordo com a probabilidade de mutação
+  \If{Elitismo}
+  \State Seleciona o melhor indivíduo da população anterior e substitui um indíviduo aleatório da geração corrente
+  \EndIf
   \EndFor
   \end{algorithmic}
 \end{algorithm}
 #+end_export
 
 
-* Análise de resultados
+* Resultados
 
-** Análise do comportamento de cada parâmetro isoladamente
-Para análisar os resultados foram utilizados os valores padrões mencionados anteriormente e um parâmetro é selecionado e analisado por vez, sendo esses os parâmetros mais significativos. Primeiro será analisado os parâmetros mais triviais e comprovado seu comportamento que já é esperado.
+Para a análise de resultados foi utilizado 10 execuções para cada conjunto de parâmetro, devido a natureza probabilística do problema é importante sempre sumarizar os resultados de varias execuções para ter uma ideia do resultado esperado.
 
-Primeiro é importante mencionar que cada ponto no gráfico é a média do melhor indivíduo na última geração de 10 execuções do mesmo parâmetro.
+** Calibragem de parâmetros
 
-É possivel ver pela figura \ref{fig:num_generations} que com o aumento do número de gerações a tendência é que chegue mais proximo do mínimo, uma constatação esperada que foi comprovada assim como na figura \ref{fig:num_pop}.
-
-#+begin_export latex
-\begin{figure}[!htb]
-	\centering
-	\subfigure[]{
-		\includegraphics[scale=0.5]{../img/num_generations.eps}
-		\label{fig:num_generations}
-	} 
-	\subfigure[]{
-		\includegraphics[scale=0.5]{../img/num_pop.eps}
-		\label{fig:num_pop}
-	} 
-	\caption{Variação dos parâmetros.}
-\end{figure}
-#+end_export
-
-Já na figura \ref{fig:num_bits} o número de bits é variado e quanto maior o número de bits mais números existem no espaço de busca com isso, assim como o valor ótimo pode ser obtido com mais precisão também é mais custoso achar o ponto ótimo.
-
-Pela figura \ref{fig:num_genes} é possível observar que quanto mais genes mais o algoritmo se afastou do ótimo, isso deve-se a o aumento de dificuldade na obtenção do ótimo pela quantidade de novos genes que precisam se aproximar dos números ótimos.
-
-#+begin_export latex
-\begin{figure}[!htb]
-	\centering
-	\subfigure[]{
-		\includegraphics[scale=0.5]{../img/num_bits.eps}
-		\label{fig:num_bits}
-	} 
-	~
-	\subfigure[]{
-		\includegraphics[scale=0.5]{../img/num_genes.eps}
-		\label{fig:num_genes}
-	} 
-	\caption{Variação dos parâmetros}
-\end{figure}
-
-#+end_export
-A figura \ref{fig:cross_rate} mostra que é importante ser feito cruzamento para uma busca pela solução ótima efetiva. Como o espaço de busca considerado é bem pequeno esse parâmetro e outros não apresentam um comportamento com bastante variabilidade, porém em futuros trabalhos essa análise podera ser feita de maneira mais visível.
-
-ção precisa ter um limite se não somente ira gerar desordem na busca pelo ótimo, isso é comprovado no gráfico
-
-No geral a figura \ref{fig:mutation_rate} mostra que a taxa de mutação so atrapalha quando a probabilidade de mutação é muito alta, pois desse modo hávera muita variação/diversificação nos valores o que causa muita desordem para ser possível fazer /exploitation/.
-
-#+BEGIN_EXPORT latex
-\begin{figure}[!htb]
-	\centering
-	\subfigure[]{
-		\includegraphics[scale=0.5]{../img/cross_rate.eps}
-		\label{fig:cross_rate}
-	} 
-	~
-	\subfigure[]{
-		\includegraphics[scale=0.5]{../img/mutation_rate.eps}
-		\label{fig:mutation_rate}
-	} 
-
-	\caption{Variação dos parâmetros}
-
-\end{figure}
-
-%\begin{figure}[!htb]
-%\includegraphics{../img/normal.eps}
-% \caption{Execução com parâmetros padrões.}
-% \label{fig:normal}
-% \end{figure}
-
-#+END_EXPORT
-
-# A figura mostra que o padrão definido na seção anterior consegue convergir (figura \ref{fig:normal}).
-
-** Otimizando hiperparâmetros
-
-Agora para solucionar o problema será feito a busca pelo melhor parâmetro que soluciona o problema. Como o valor padrão para o número de bits é muito baixo, se torna muito fácil achar a solução ótima e fica sem sentido a busca pelo melhor parâmetro visto que a maioria das soluções são ótimas (ótima em relação ao domínio), devido a isso será utilizado 25 bits. Para isso será considerado os parâmetros que possuem mais impacto: gerações; população; taxa de cruzamento e taxa de mutação. A tabela ref:tbl:hyperparameter a seguir descreve os domínios de busca para cada parâmetro.
+Para começo da análise um experimento fatorial completo será realizado. Os valores para busca estão indicados tabela a seguir com o domínio de busca para cada parâmetro (tabela ref:tbl:hyperparameter).
 
 #+CAPTION: Domínio de busca de cada parâmetro.
 #+LABEL: tbl:hyperparameter
-|--------------------+-------------------|
-| #Gerações          | {50,100}          |
-| #População         | {50,100}          |
-| Taxa de cruzamento | {0.6, 0.8, 1.0}   |
-| Taxa de mutação    | {0.01, 0.05, 0.1} |
-|--------------------+-------------------|
+|--------------------------+-------------------------------------------------|
+| Operador de cruzamento   | {$BLX\text{-}\alpha$, $BLX\text{-}\alpha\beta$} |
+| Elitismo                 | {False, True}                                   |
+| #Gerações                | {25,50,100}                                     |
+| #População               | {25,50,100}                                     |
+| Taxa de cruzamento       | {0.6, 0.8, 1.0}                                 |
+| Probabilidade de mutação | {0.01, 0.05, 0.1}                               |
+|--------------------------+-------------------------------------------------|
+
 
 A partir da execução o /top/-10 de parâmetros são descritos na tabela a seguir:
 
