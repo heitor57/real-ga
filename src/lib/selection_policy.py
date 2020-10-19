@@ -27,14 +27,15 @@ class Tournament(SelectionPolicy):
         return fathers
 
 class Roulette(SelectionPolicy):
+    def __init__(self,population):
+        super().__init__(population)
+        self.ofvs = np.array([1/ind.ofv for ind in self.population])
+        self.probabilities = self.ofvs/np.sum(self.ofvs)
     def select(self):
-        population=self.population
-        ofvs = np.array([1/ind.ofv for ind in population])
-        probabilities = ofvs/np.sum(ofvs)
         r = np.random.random()
         cumulated = 0
         chosen_ind = None
-        for p, ind in zip(probabilities,population):
+        for p, ind in zip(self.probabilities,self.population):
             cumulated += p
             if cumulated >= r:
                 chosen_ind = ind

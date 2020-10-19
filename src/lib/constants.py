@@ -1,4 +1,5 @@
 from pathlib import Path
+import matplotlib
 class Colors:
     RESET = '\033[0m'
     DARK = '\033[30m'
@@ -30,5 +31,8 @@ columns = ['#Generation','Best genome','Best fitness','Mean fitness']
 
 # Execution parameters
 
-
 NUM_EXECUTIONS = 10
+
+matplotlib.rc('xtick', labelsize=14) 
+matplotlib.rc('ytick', labelsize=14) 
+matplotlib.rc('axes', labelsize=14) 

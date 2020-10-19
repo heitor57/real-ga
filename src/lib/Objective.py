@@ -1,5 +1,6 @@
 import math
 import numpy as np
+
 class Objective:
     def compute(self,ind):
         f=self._compute(ind.genome)
@@ -17,3 +18,5 @@ class Objective:
         s_exp = 1/n * t
         f = -20 * math.exp(f_exp) - math.exp(s_exp) + 20 + math.exp(1)
         return f
+if __name__ == '__main__':
+    print(Objective()._compute([0,0]))
