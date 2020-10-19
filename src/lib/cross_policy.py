@@ -33,7 +33,7 @@ class BLXab(CrossPolicy):
     def cross(self,ind1,ind2):
         nind1= Individual(genome=[0]*len(ind1.genome))
         nind2= Individual(genome=[0]*len(ind1.genome))
-        if ind1.ofv < ind2.ofv:
+        if ind1.ofv > ind2.ofv:
             ind1, ind2 = ind2, ind1
 
         i = 0
