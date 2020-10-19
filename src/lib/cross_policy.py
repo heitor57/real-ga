@@ -5,7 +5,7 @@ class CrossPolicy:
     pass
 
 class BLXa(CrossPolicy):
-    def __init__(self,min_value,max_value,alpha=0.5):
+    def __init__(self,min_value,max_value,alpha):
         self.alpha=alpha
         self.min_value=min_value
         self.max_value=max_value
@@ -24,7 +24,7 @@ class BLXa(CrossPolicy):
         return nind1, nind2
 
 class BLXab(CrossPolicy):
-    def __init__(self,min_value,max_value,alpha=0.75,beta=0.25):
+    def __init__(self,min_value,max_value,alpha,beta):
         self.alpha=alpha
         self.beta=beta
         self.min_value=min_value

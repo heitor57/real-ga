@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 
 class SelectionPolicy:
@@ -29,12 +31,8 @@ class Tournament(SelectionPolicy):
 class Roulette(SelectionPolicy):
     def __init__(self,population):
         super().__init__(population)
-        ofvs = np.array([ind.ofv for ind in self.population])
-        ofvs = 1+np.max(ofvs)+np.min(ofvs)-ofvs
-        # ofvs = 1/ofvs
-        # ofvs = (ofvs-np.mean(ofvs))/np.std(ofvs)
-        # ofvs=  np.max(ofvs)+ofvs
-        # print(ofvs)
+        ofvs = np.array([abs(ind.ofv) for ind in self.population])
+        ofvs = 1/(ofvs+1/np.finfo(ofvs.dtype).max)
         self.probabilities = ofvs/np.sum(ofvs)
     def select(self):
         r = np.random.random()

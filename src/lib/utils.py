@@ -1,23 +1,35 @@
-from concurrent.futures import ProcessPoolExecutor
-from tqdm import tqdm
 import os
 import multiprocessing
+from concurrent.futures import ProcessPoolExecutor
+
+from tqdm import tqdm
 import numpy as np
+
+from .constants import *
 
 def dict_to_list_gen(d):
     for k, v in zip(d.keys(), d.values()):
         if v == None:
             continue
-        yield k
-        yield v
+        if type(v) == dict: 
+            v = '{'+get_parameters_name(v,num_dirs=0)+'}'
+        yield [k,v]
 
 def dict_to_list(d):
     return list(dict_to_list_gen(d))
 
-def get_parameters_name(parameters):
+def get_parameters_name(parameters,num_dirs=0):
     # parameters = {k:v for k,v in parameters if v}
-    list_parameters=list(map(str,dict_to_list(parameters)))
-    return '_'.join(list_parameters)
+    list_parameters=['_'.join(map(str,i)) for i in dict_to_list(parameters)]
+    string = '/'.join(list_parameters[:num_dirs]) +\
+        ('/' if num_dirs else '')
+    string += '_'.join(list_parameters[num_dirs:])
+    return string
+
+if __name__ == '__main__':
+    print(get_parameters_name({'a':2, 'b':3}))
+    print(get_parameters_name({'a':2, 'b':3,'d':{'alpha':1, 'xd':{'s':5}}}))
+    pass
 
 def run_parallel(func, args,chunksize = None,use_tqdm=True):
     executor = ProcessPoolExecutor()

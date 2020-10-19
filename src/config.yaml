@@ -1,5 +1,11 @@
+cross_policy:
+  BLXa:
+    alpha: 0.5
+  BLXab:
+    alpha: 0.75
+    beta: 0.25
 general:
-  print_table: False
+  print_table: True
 parameters:
   mutation_policy:
     default: "UniformRandomSolutionSpace"

@@ -9,16 +9,15 @@ import yaml
 
 from lib import *
 
-import traceback
-import warnings
 import sys
+from pathlib import Path
+import os
 
 parser = argparse.ArgumentParser()
 config = yaml.load(open('config.yaml'), Loader=yaml.FullLoader)
 parameters = config['parameters']
 
 for k, v in parameters.items():
-    
     parser.add_argument('--'+k,default=v['default'],
                         type=str2bool if type(v['default']) == bool else type(v['default']))
 
@@ -27,14 +26,13 @@ for k,v in vars(args).items():
     locals()[k] = v
     parameters[k]['value'] = v
     
-
 num_cross = int((cross_rate * num_pop)/2)
 num_no_cross = num_pop-2*num_cross
 
 # information to catch from algorithm
 
 objective = Objective()
-cross_policy = eval(parameters['cross_policy']['value'])(min_value,max_value)
+cross_policy = eval(parameters['cross_policy']['value'])(min_value,max_value,**config['cross_policy'][parameters['cross_policy']['value']])
 mutation_policy = eval(parameters['mutation_policy']['value'])(mutation_rate,min_value,max_value)
 
 population = []
@@ -121,6 +119,8 @@ if config['general']['print_table']:
 
     print(Colors.RESET,end='')
 
-fout = open(DIRS['DATA_DIR']+get_parameters_name({k: v['value'] for k,v in parameters.items()})+'.json','w')
+string=get_parameters_name({k: v['value'] for k,v in parameters.items()})
+Path(os.path.dirname(DIRS['DATA_DIR']+string)).mkdir(parents=True, exist_ok=True)
+fout = open(DIRS['DATA_DIR']+string+'.json','w')
 fout.write(df.to_json(orient='records',lines=False))
 fout.close()
