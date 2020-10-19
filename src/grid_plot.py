@@ -13,7 +13,7 @@ config = yaml.load(open('config.yaml'), Loader=yaml.FullLoader)
 parameters = {k: [v['default']] for k, v in config['parameters'].items()}
 to_update = {
     "cross_policy": ['BLXa','BLXab'],
-    "elitism": [True,False],
+    "elitism": [False,True],
     "num_pop": [25,50,100],
     "num_generations": [25,50,100],
     "cross_rate": [0.6,0.8,1.0],
@@ -29,6 +29,7 @@ result_df = pd.DataFrame(columns=parameters_names)
 for i,combination in enumerate(combinations):
     p = {k:v for k,v in zip(parameters_names,combination)}
     name = get_parameters_name(p)
+    # print(DIRS['DATA_DIR']+name+'.json')
     df = pd.read_json(DIRS['DATA_DIR']+name+'.json')
     result_df.loc[i,parameters_names] = combination
     result_df.loc[i,'Best fitness'] = df.iloc[-1]['Best fitness']

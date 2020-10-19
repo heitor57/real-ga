@@ -8,8 +8,8 @@ from lib.constants import *
 from lib.utils import *
 
 parameters = {
-    "cross_policy": ['BLXa','BLXab'],
-    "elitism": [False],
+    "cross_policy": ['BLXab'],
+    "elitism": [True],
     "num_generations": [25,50,100],
     "num_pop": [25,50,100],
     "cross_rate": [0.6,0.8,1.0],
@@ -20,4 +20,4 @@ parameters_names = list(parameters.keys())
 combinations = itertools.product(*list(parameters.values()))
 args = [('python genetic_algorithm.py '+' '.join([f'--{k}={v}' for k,v in zip(parameters_names,combination)]),)
  for combination in combinations]
-run_parallel(os.system,args,chunksize=5)
+run_parallel(os.system,args,chunksize=20)
