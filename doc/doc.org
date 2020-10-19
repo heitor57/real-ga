@@ -1,7 +1,8 @@
-#+TITLE: Algoritmo genético
+#+TITLE: Algoritmo genético com representação real
 #+SUBTITLE: Algoritmos Bioinspirados
 #+AUTHOR: Heitor Lourenço Werneck
 #+EMAIL: heitorwerneck@hotmail.com
+#+DATE: 
 #+LANGUAGE: pt
 #+OPTIONS: ^:nil email:nil author:nil toc:nil
 #+LATEX_HEADER: \author{Heitor Lourenço Werneck \\github.com/heitor57\\{\href{mailto:heitorwerneck@hotmail.com}{heitorwerneck@hotmail.com}}}
@@ -81,27 +82,30 @@ Algoritmos genéticos são utilizados em diversos cenários pela natureza genera
 
 Os algoritmos genéticos também possuem a capacidade de fazer /exploitation/ e /exploration/ que são características de modelos estado da arte em diversas áreas, como por exemplo: /Multi-Armed Bandits/; Nuvem de partículas e outros. Uma característica extremamente importante para diversos cenários.
 
-Esse trabalho consiste na implementação e análise de um algoritmo genético para solução de um problema de otimização de uma função.
+Esse trabalho consiste na implementação e análise de um algoritmo genético com representação real para solução de um problema de otimização de uma função.
 
 * Problema
 
-O problema é simples e consiste na minimização da função da equação ref:eq:fo. 
+O problema é simples e consiste na minimização da função da equação ref:eq:of. 
 #+begin_export latex
 \begin{equation}
-\label{eq:fo}
+\label{eq:of}
 F_o(x) = -20\epsilon^{-0.2}\sqrt{\frac{1}{n}\sum x_i^2} - \epsilon^{\frac{1}{n}\sum cos(2\pi x_i)} + 20 + \epsilon
 \end{equation}
 #+end_export
 
-É importante notar que como o problema será representado em um sistema computacional como um vetor de números binários então o espaço de busca terá $2^{\text{bits}}$ possibilidades de solução. Isso mostra que é um problema difícil, pois possui uma complexidade de ordem exponencial no espaço de soluções, por isso é importante usar alguma heurística ou meta-heurística (que no caso é algoritmo genético) para solucionar esse problema caso não tenha solução analítica viável.
+É importante notar que como o problema será representado em um sistema computacional como um número real então o espaço de busca terá $2^{\text{bits}}$ possibilidades de solução. Isso mostra que é um problema difícil, pois possui uma complexidade de ordem exponencial no espaço de soluções, por isso é importante usar alguma heurística ou meta-heurística (que no caso é algoritmo genético) para solucionar esse problema caso não tenha solução analítica viável.
 
 * Solução
 
-A estruturas basicas para o algoritmo foram determinadas da seguinte forma: os genes são números binários de tamanho $\# Bits$ (definido posteriormente) tal que é transformado em decimal dentro de um espaço linear $[x_{min},x_{max}]$ para ser avaliado pela função objetivo. A estrutura foi feita dessa forma pois permite mais flexibilidade nas operações genéticas e também delimita um espaço de busca discreto que pode ajudar na solução de alguns problemas. 
+As estruturas básicas para o algoritmo foram determinadas da seguinte forma: os genes são números reais e não precisam de nenhuma transformação para serem aplicados na equação eqref:eq:of, essa representação é, em comparação com o número de bits utilizado na outra representação do trabalho anterior, muito mais complexa em termos de quantidade de possíveis soluções (espaço de busca bem maior), claro que o espaço de busca poderia ser ainda maior com a representação por bits, porém em termos de eficiência na busca está implementação é mais efetiva. O espaço de busca continua sendo discreto porém bem maior do que com os números de bits utilizados no trabalho anterior. Como a linguagem utilizada foi Python e nessa linguagem o tipo de dado utilizado para representar um gene (o número real) foi o /float/. O /float/ em Python é majoritariamente mapeado para IEEE-754 “precisão dupla” nas plataformas, inclusive a usada para fazer o experimento.
 
-O intervalo de busca de valores foi dentro do domínio $x_{min} = -2$ e $x_{max} = 2$, isso por que foi analisado que dentro dessa espaço há bons valores para minimização da função. Foi utilizado uma população com tamanho 50 e o número de iterações utilizados foi de 20. O espaço linear delimitado dentro deste domínio contém $2^{\# Bits}$ valores sendo $\# Bits=6$ e 2 genes ($\# Genes = 2$; genes de $\# Bits$ bits) utilizados. Esses valores serão variados posteriormente para análise do comportamento do algoritmo.
+Para guiar a busca o estado de busca de soluções foi dentro do domínio $max_{value} = -2$ e $min_{value} = 2$ (i.e. $x \in [min_{value},max_{value}]$), isso por que foi analisado que dentro dessa espaço há bons valores para minimização da função.
 
-A estrategia de seleção utilizada foi a roleta, tal que é selecionado dois indivíduos aleatórios na população e o indivíduo com maior aptidão (menor valor na função objetivo) será selecionado como o primeiro pai a compor o par de pais com probabilidade de 90%. Após isso o processo é repetido excluindo o indivíduo já selecionado e dois pais são obtidos.
+A estrategia de seleção de pais utilizada foi a roleta, tal que um indivíduo é selecionado a partir de um procedimento que define 
+
+
+ o indivíduo com maior aptidão (menor valor na função objetivo) será selecionado como o primeiro pai a compor o par de pais com probabilidade de 90%. Após isso o processo é repetido excluindo o indivíduo já selecionado e dois pais são obtidos.
 
 Para a intensificação do espaço de busca foi utilizado o cruzamento, tal que o algoritmo irá selecionar um ponto dentro do intervalo $[1,\# Bits \cdot \# Genes -2]$ e esse ponto irá ser utilizado para o particionamento dos pedaços do genoma para criação dos filhos. A taxa de cruzamento utilizada por padrão foi de 100%.
 
