@@ -35,4 +35,6 @@ NUM_EXECUTIONS = 10
 
 matplotlib.rc('xtick', labelsize=14) 
 matplotlib.rc('ytick', labelsize=14) 
+matplotlib.rc('font', size=14) 
 matplotlib.rc('axes', labelsize=14) 
+matplotlib.rc('lines', linewidth=3) 

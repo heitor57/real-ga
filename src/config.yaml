@@ -5,7 +5,7 @@ cross_policy:
     alpha: 0.75
     beta: 0.25
 general:
-  print_table: True
+  print_table: False
 parameters:
   mutation_policy:
     default: "OneGene"
@@ -26,13 +26,13 @@ parameters:
     default: 2 # Number of genes
     pretty_name: "#Genes"
   cross_rate:
-    default: 0.8 # Rate of individuals who are going to be crossed instead of being preserved from previous generation, commonly it is going to stay in 1.0 but to be more flexible it is presented as a variable
+    default: 0.6 # Rate of individuals who are going to be crossed instead of being preserved from previous generation, commonly it is going to stay in 1.0 but to be more flexible it is presented as a variable
     pretty_name: "Cross rate"
   elitism: 
-    default: False
+    default: True
     pretty_name: "Elitism"
   mutation_rate: 
-    default: 0.10
+    default: 0.01
     pretty_name: "Mutation rate"
   min_value:
     default: -2.0 # Linear space minimum number
