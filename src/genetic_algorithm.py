@@ -120,8 +120,10 @@ if config['general']['print_table']:
 
     print(Colors.RESET,end='')
 
+
 string=get_parameters_name({k: v['value'] for k,v in parameters.items()})
-Path(os.path.dirname(DIRS['DATA_DIR']+string)).mkdir(parents=True, exist_ok=True)
-fout = open(DIRS['DATA_DIR']+string+'.json','w')
+Path(os.path.dirname(DIRS['DATA']+string)).mkdir(parents=True, exist_ok=True)
+
+fout = open(DIRS['DATA']+string+'.json','w')
 fout.write(df.to_json(orient='records',lines=False))
 fout.close()

@@ -6,7 +6,6 @@ cross_policy:
     beta: 0.25
 general:
   print_table: True
-  plot_best_mean: True
 parameters:
   mutation_policy:
     default: "OneGene"
