@@ -125,10 +125,11 @@ Os parâmetros mais relevantes são mostrados na tabela a seguir, através dele 
 | Elitismo                 | Se irá usar a preservação do melhor indivíduo da população anterior |
 
 
-Uma visão geral de como o algoritmo funciona é dado a seguir:
+Uma visão geral de como o algoritmo funciona é dado no algoritmo ref:alg:ag.
 #+begin_export latex
 \begin{algorithm}
   \caption{Algoritmo genético}
+  \label{alg:ag}
   \begin{algorithmic}[1]
   \State Inicia a população com cromossomos aleatórios
   \For{$i=1$ to \#Gerações}
@@ -148,12 +149,15 @@ Uma visão geral de como o algoritmo funciona é dado a seguir:
 
 Para a análise de resultados foi utilizado 10 execuções para cada conjunto de parâmetro, devido a natureza probabilística do problema é importante sempre sumarizar os resultados de varias execuções para ter uma ideia do resultado esperado.
 
+Também é preciso definir os parâmetros dos operadores de cruzamento, são eles:
+$BLX\text{-}\alpha$ com $\alpha = 0.5$ e $BLX\text{-}\alpha\beta$ com $\alpha = 0.75, \beta = 0.25$.
+
 ** Calibragem de parâmetros
 
 Para começo da análise um experimento fatorial completo será realizado. Os valores para busca estão indicados tabela a seguir com o domínio de busca para cada parâmetro (tabela ref:tbl:hyperparameter).
 
 #+CAPTION: Domínio de busca de cada parâmetro.
-#+LABEL: tbl:hyperparameter
+#+NAME: tbl:hyperparameter
 |--------------------------+-------------------------------------------------|
 | Operador de cruzamento   | {$BLX\text{-}\alpha$, $BLX\text{-}\alpha\beta$} |
 | Elitismo                 | {False, True}                                   |
@@ -164,37 +168,59 @@ Para começo da análise um experimento fatorial completo será realizado. Os va
 |--------------------------+-------------------------------------------------|
 
 
-A partir da execução o /top/-10 de parâmetros são descritos na tabela a seguir:
+Depois da execução o top-25 de parâmetros são descritos na tabela ref:tbl:parameters, onde $\mu$ denota a média e $\sigma$ denota o desvio padrão das 10 execuções. Nessa tabela os dados são obtidos pela ultima geração de cada execução.
 
-|------------+-----------+--------------------+-----------------+------------------------+----------------------------|
-| #População | #Gerações | Taxa de cruzamento | Taxa de mutação |            Média $F_o$ | Desvio padrão        $F_o$ |
-|------------+-----------+--------------------+-----------------+------------------------+----------------------------|
-|        100 |       100 |                0.8 |            0.01 |              3.982e-05 |               2.949474e-05 |
-|        100 |       100 |                1.0 |            0.01 |             6.5716e-05 |              9.0926290e-05 |
-|        100 |       100 |                0.6 |            0.01 |              0.0001981 |                 0.00019136 |
-|         50 |       100 |                0.6 |            0.01 |              0.0002714 |                0.000179354 |
-|         50 |       100 |                0.8 |            0.01 |               0.000417 |                0.000392633 |
-|        100 |        50 |                0.6 |            0.01 |                0.00049 |                0.000307831 |
-|        100 |        50 |                0.8 |            0.01 |              0.0007104 |                0.000726924 |
-|         50 |       100 |                1.0 |            0.01 |             0.00125232 |                 0.00116128 |
-|         50 |        50 |                0.8 |            0.01 |              0.0013694 |                0.001276186 |
-|        100 |       100 |                1.0 |            0.05 |              0.0017521 |                0.002844937 |
+É possível ver que diversos conjuntos de parâmetros conseguiram chegar na mesma melhor solução, isso mostra que diversas combinações de parâmetros são viáveis para otimização desse problema. Também é interessante notar que diversas execuções para um mesmo conjunto de parâmetros conseguiram chegar no mesmo resultado, assim obtendo um desvio padrão de 0 para diversas soluções, mostrando resultados bem consistentes.
 
+A aptidão média no geral é bem maior relativamente a melhor aptidão, isso pois eventualmente indivíduos terão genes mutados e isso causa uma oscilação na aptidão média, porém uma medida mais robusta contra outliers mostra que grande parte das execuções tiveram um bom balanço da aptidão da população. Então é importante usar uma medida robusta a outliers para não se ter um falso julgamento na avaliação da execução de algoritmos genéticos. 
 
+Tanto soluções sem elitismo e com elitismo conseguiram obter soluções ótimas, soluções com elitismo são mais abertas a diversificação da população (i.e., mais mutação), pois com a preservação do melhor indivíduo buscas diversas são mais seguras já que não correm o risco de perder bons indíviduos. Mas também é interessante notar que os resultados sem elitismo também conseguem chegar na solução ótima, isso porque atráves de cruzamento os pais ainda conseguem propagar seus genes e indíviduos com mais aptidão possuem mais probabilidade de cruzamento. Isso pode ser notado pois grande parte das melhores soluções sem elitismo possuem uma taxa de cruzamento maior ou igual a 0.8 (também existe exceção porém utilizando $BLX\text{-}\alpha\beta$ que direciona a busca para o melhor indivíduo). Também na maioria das soluções com elitismo e sem elitismo as médias de aptidão média são bem próximas.
 
-É interessante se notar que os três melhores conjunto de parâmetros so se diferenciam pela taxa de cruzamento. E mesmo somente pela taxa de cruzamento é possível observar uma diferença significativa entre o /top/-1 e o /top/-3, assim mostrando a importancia desse parâmetro. É possível ver que as melhores soluções para esse problema não utilizam diversificação de maneira ingenua, sendo mais conservador nas operações de mutação e cruzamento. Também é importante notar que o alto valor de população e gerações é importante para essa configuração mais conservadora pois ele converge para a melhor solução lentamente.
+Outro ponto a se notar é que grande parte das soluções possuem uma taxa de cruzamento maior que 0.6, isso mostra que para esse problema é importante um alto nivel de intensificação no espaço de busca, isso pode se dever ao espaço de busca ser relativamente grande comparado com o trabalho com representação binária que um espaço de busca muito menor foi especificado.
 
-Na figura ref:fig:best_executions há as execuções do algoritmo com o melhor parâmetro, é possível ver que ele chega em um valor baixo rapidamente porém continua convergindo até a solução durante as gerações. Também houve pouca variação nas execuções, como também foi mostrado na tabela, porém no começo poucas execuções demoram a descer para próximo do valor ótimo.
+As taxas de mutação foram bem diversas, elas conseguem combinar com os parâmetros de diversas maneiras diferentes podendo aumentar seu valor (assim aumentando a diversificação) e aumentando intensificação atráves de outro parâmetro para balancear.
+
+Os dois operadores de cruzamento conseguiram ter soluções ótimas, porém é interessante notar que um operador funciona melhor com certos cenários como discutido anteriormente. No geral o $BLX\text{-}\alpha\beta$ conseguiu cobrir mais casos de parâmetros devido a sua busca mais direcionada ao melhor indivíduo.
 
 #+begin_export latex
-\begin{figure}[!htb]
-	\centering
-	\includegraphics[scale=0.5]{../img/best_executions.eps}
-	\label{fig:best_executions}
-	\caption{Execuções do melhor parâmetro}
-\end{figure}
-#+end_export
+\begin{table}
+\footnotesize
+\caption{Top-25 Parâmetros e seus resultados}
+\label{tbl:parameters}
+  \makebox[\textwidth]{
+\begin{tabular}{|p{0.88cm}|l|p{2cm}|l|l|l|l|l|l|l|l|l|}
+Taxa de cruzamento & \rotatebox[origin=c]{45}{Elitismo} & Probabilidade de mutação & \rotatebox[origin=c]{45}{Cruzamento} & \rotatebox[origin=c]{45}{\#Gerações} & \rotatebox[origin=c]{45}{\#População} & \multicolumn{2}{c}{Melhor aptidão} & \multicolumn{2}{|c|}{Aptidão média} & \multicolumn{2}{c|}{Aptidão mediana}\\
+ & & & & & & \multicolumn{1}{c|}{$\mu$}& \multicolumn{1}{c|}{$\sigma$} & \multicolumn{1}{|c|}{$\mu$}& \multicolumn{1}{c|}{$\sigma$} &\multicolumn{1}{c|}{$\mu$}& \multicolumn{1}{c|}{$\sigma$} \\
+0.8 & False & 0.10 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.439 & 0.137 & 4.441e-16 & 0.000e+0\\
+0.8 & False & 0.10 & $BLX\text{-}\alpha$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.424 & 0.123 & 4.441e-16 & 0.000e+0\\
+0.8 & True & 0.05 & $BLX\text{-}\alpha$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.221 & 0.127 & 4.441e-16 & 0.000e+0\\
+0.8 & True & 0.10 & $BLX\text{-}\alpha\beta$ & 100 & 50 & 4.441e-16 & 0.000e+0 & 0.450 & 0.223 & 4.441e-16 & 0.000e+0\\
+0.8 & True & 0.10 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.467 & 0.112 & 4.441e-16 & 0.000e+0\\
+1.0 & False & 0.01 & $BLX\text{-}\alpha\beta$ & 50 & 100 & 4.441e-16 & 0.000e+0 & 0.065 & 0.036 & 4.441e-16 & 0.000e+0\\
+1.0 & False & 0.01 & $BLX\text{-}\alpha\beta$ & 100 & 50 & 4.441e-16 & 0.000e+0 & 0.033 & 0.073 & 4.441e-16 & 0.000e+0\\
+1.0 & False & 0.01 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.030 & 0.044 & 4.441e-16 & 0.000e+0\\
+1.0 & False & 0.05 & $BLX\text{-}\alpha$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.181 & 0.114 & 4.441e-16 & 0.000e+0\\
+1.0 & False & 0.05 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.139 & 0.057 & 4.441e-16 & 0.000e+0\\
+1.0 & False & 0.10 & $BLX\text{-}\alpha$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.390 & 0.106 & 4.441e-16 & 0.000e+0\\
+1.0 & False & 0.10 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.364 & 0.097 & 4.441e-16 & 0.000e+0\\
+1.0 & True & 0.01 & $BLX\text{-}\alpha$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.041 & 0.034 & 4.441e-16 & 0.000e+0\\
+1.0 & True & 0.01 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.033 & 0.037 & 4.441e-16 & 0.000e+0\\
+1.0 & True & 0.05 & $BLX\text{-}\alpha\beta$ & 50 & 100 & 4.441e-16 & 0.000e+0 & 0.158 & 0.074 & 4.441e-16 & 0.000e+0\\
+1.0 & True & 0.05 & $BLX\text{-}\alpha\beta$ & 100 & 25 & 4.441e-16 & 0.000e+0 & 0.189 & 0.179 & 4.441e-16 & 0.000e+0\\
+1.0 & True & 0.05 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.180 & 0.116 & 4.441e-16 & 0.000e+0\\
+1.0 & True & 0.10 & $BLX\text{-}\alpha\beta$ & 50 & 100 & 4.441e-16 & 0.000e+0 & 0.392 & 0.091 & 4.441e-16 & 0.000e+0\\
+0.8 & False & 0.05 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.223 & 0.114 & 4.441e-16 & 0.000e+0\\
+0.6 & False & 0.10 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.632 & 0.176 & 4.441e-16 & 0.000e+0\\
+1.0 & True & 0.10 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.271 & 0.087 & 4.441e-16 & 0.000e+0\\
+0.6 & False & 0.01 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 4.441e-16 & 0.000e+0 & 0.068 & 0.052 & 4.441e-16 & 0.000e+0\\
+1.0 & True & 0.05 & $BLX\text{-}\alpha$ & 100 & 100 & 7.993e-16 & 1.123e-15 & 0.202 & 0.107 & 7.993e-16 & 1.123e-15\\
+0.6 & True & 0.01 & $BLX\text{-}\alpha\beta$ & 100 & 100 & 7.993e-16 & 1.123e-15 & 0.035 & 0.034 & 7.993e-16 & 1.123e-15\\
+1.0 & True & 0.01 & $BLX\text{-}\alpha\beta$ & 50 & 100 & 7.993e-16 & 1.123e-15 & 0.024 & 0.049 & 7.993e-16 & 1.123e-15\\
+\end{tabular}
+}
+\end{table}
 
+#+end_export
 
 * Conclusão
 
