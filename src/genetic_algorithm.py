@@ -42,13 +42,13 @@ for i in range(num_pop):
     population.append(ind)
     objective.compute(ind)
 
-columns = ['#Generation','Best genome','Best fitness','Mean fitness', 'Median fitness']
+columns = ['#Generation','Best genome','Best fitness','Mean fitness', 'Median fitness', 'Worst fitness']
 df = pd.DataFrame([],columns = columns)
 df = df.set_index(columns[0])
 
 best_ind = population[np.argmin([ind.ofv for ind in population])]
 ofvs = [ind.ofv for ind in population]
-df.loc[1] = [','.join(map(lambda x: f'{x:.5f}',best_ind.genome)), f'{best_ind.ofv:.4}',f'{np.mean(ofvs):.4}',f'{np.median(ofvs):.4}']
+df.loc[1] = [','.join(map(lambda x: f'{x:.5f}',best_ind.genome)), f'{best_ind.ofv:.4}',f'{np.mean(ofvs):.4}',f'{np.median(ofvs):.4}',f'{np.max(ofvs):.4}']
 
 for i in range(2,num_generations+1):
     new_population = []
@@ -79,7 +79,7 @@ for i in range(2,num_generations+1):
 
     best_ind = population[np.argmin([ind.ofv for ind in population])]
     ofvs = [ind.ofv for ind in population]
-    df.loc[i] = [','.join(map(lambda x: f'{x:.5f}',best_ind.genome)), f'{best_ind.ofv:.4}',f'{np.mean(ofvs):.4}',f'{np.median(ofvs):.4}']
+    df.loc[i] = [','.join(map(lambda x: f'{x:.5f}',best_ind.genome)), f'{best_ind.ofv:.4}',f'{np.mean(ofvs):.4}',f'{np.median(ofvs):.4}',f'{np.max(ofvs):.4}']
 df = df.reset_index()
 
 if config['general']['print_table']:

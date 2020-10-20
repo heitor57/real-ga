@@ -11,7 +11,7 @@ parameters:
     default: "OneGene"
     pretty_name: "Mutation Policy"
   cross_policy:
-    default: "BLXa"
+    default: "BLXab"
     pretty_name: "Cross Policy"
   selection_policy:
     default: "Roulette"
