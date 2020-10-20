@@ -17,20 +17,31 @@ for k,v in vars(args).items():
     parameters[k]['value'] = v
 
 
-# dfs = []
-# for i in range(1,NUM_EXECUTIONS+1):
-#     parameters.update({'eid': i})
-fig, ax = plt.subplots()
-name=get_parameters_name({k: v['value'] for k,v in parameters.items()})
+with plt.style.context('seaborn-paper'):
+    fig, ax = plt.subplots()
+    name=get_parameters_name({k: v['value'] for k,v in parameters.items()})
+    df = pd.read_json(DIRS['DATA']+name+'.json')
+    ax.plot(df['Best fitness'],label='Melhor aptidão')
+    ax.plot(df['Mean fitness'],label='Aptidão média')
+    ax.plot(df['Median fitness'],label='Aptidão mediana')
+    ax.plot(df['Worst fitness'],label='Pior Aptidão')
+    ax.set_ylabel("Aptidão")
+    ax.set_xlabel("Geração")
+    ax.legend()
+    fig.savefig(f"{DIRS['IMG']}{name}_mean_and_median_and_best.png",bbox_inches="tight")
 
-df = pd.read_json(DIRS['DATA']+name+'.json')
-ax.plot(df['Best fitness'],label='Melhor aptidão')
-ax.plot(df['Mean fitness'],label='Aptidão média')
-ax.plot(df['Median fitness'],label='Aptidão mediana')
-ax.plot(df['Worst fitness'],label='Pior Aptidão')
-ax.set_ylabel("Aptidão")
-ax.set_xlabel("Geração")
-ax.legend()
-fig.savefig(f"{DIRS['IMG']}{name}_mean_and_median_and_best.png",bbox_inches="tight")
-# dfs.append(df)
-    # Path(os.path.dirname(DIRS['DATA']+name)).mkdir(parents=True, exist_ok=True)
+    dfs = []
+
+    fig, ax = plt.subplots()
+    for i in range(1,NUM_EXECUTIONS+1):
+        parameters.update({'eid': {'value':i}})
+        name=get_parameters_name({k: v['value'] for k,v in parameters.items()})
+        df = pd.read_json(DIRS['DATA']+name+'.json')
+        ax.plot(df['Best fitness'],label=f'Execução {i}')
+    ax.set_ylabel("Aptidão")
+    ax.set_xlabel("Geração")
+    ax.legend()
+    fig.savefig(f"{DIRS['IMG']}{name}_multiple_executions.png",bbox_inches="tight")
+
+    # dfs.append(df)
+        # Path(os.path.dirname(DIRS['DATA']+name)).mkdir(parents=True, exist_ok=True)
