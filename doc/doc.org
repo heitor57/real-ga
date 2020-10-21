@@ -129,7 +129,7 @@ Quando a taxa de cruzamento não é de 100% então indivíduos da população an
 
 ** Mutação
 
-Para mutação dos indivíduos foi utilizado um parâmetro de taxa de mutação que define a probabilidade de um indivíduo ser mutado. A mutação foi definida como o sorteio de um gene para ter o valor trocado através de outro sorteio de um valor dentro do intervalo $[min_{value},max_{value}]$.
+Para mutação dos indivíduos foi utilizado um parâmetro de taxa de mutação que define a probabilidade de um gene ser mutado. A mutação foi definida como o sorteio de um gene para ter o valor trocado através de outro sorteio de um valor dentro do intervalo $[min_{value},max_{value}]$.
 
 ** Elitismo
 
@@ -146,7 +146,7 @@ Os parâmetros mais relevantes são mostrados na tabela a seguir, através dele 
 | #População               | Quantidade de indivíduos                                            |
 | #Gerações                | Quantidade de gerações                                              |
 | Taxa de cruzamento       | Taxa do número de indivíduos que vão cruzar                         |
-| Probabilidade de mutação | Probabilidade da mutação de um indivíduo                            |
+| Probabilidade de mutação | Probabilidade da mutação de um gene                                 |
 | Elitismo                 | Se irá usar a preservação do melhor indivíduo da população anterior |
 
 

@@ -8,7 +8,7 @@ general:
   print_table: True
 parameters:
   mutation_policy:
-    default: "OneGene"
+    default: "UniformRandomSolutionSpace"
     pretty_name: "Mutation Policy"
   cross_policy:
     default: "BLXab"
