@@ -30,6 +30,9 @@
 #+LATEX_HEADER: \usepackage{color, colortbl}
 #+LATEX_HEADER: \usepackage{chngcntr}
 #+LATEX_HEADER: \usepackage{epstopdf}
+#+LATEX_HEADER: \usepackage{comment}
+#+LATEX_HEADER: \usepackage{float}
+
 #+latex_class_options: [11pt]
 
 #+PROPERTY: header-args :eval no-export
@@ -95,25 +98,44 @@ F_o(x) = -20\epsilon^{-0.2}\sqrt{\frac{1}{n}\sum x_i^2} - \epsilon^{\frac{1}{n}\
 \end{equation}
 #+end_export
 
-É importante notar que como o problema será representado em um sistema computacional como um número real então o espaço de busca terá $2^{\text{bits}}$ possibilidades de solução. Isso mostra que é um problema difícil, pois possui uma complexidade de ordem exponencial no espaço de soluções, por isso é importante usar alguma heurística ou meta-heurística (que no caso é algoritmo genético) para solucionar esse problema caso não tenha solução analítica viável.
+É importante notar que como o problema será representado em um computador como um número real então o espaço de busca terá $2^{\text{bits}}$ possibilidades de solução, onde bits vai depender do tipo de dado, linguagem e a arquitetura. Isso mostra que é um problema difícil, pois possui uma complexidade de ordem exponencial no espaço de soluções, por isso é importante usar alguma heurística ou meta-heurística (que no caso é algoritmo genético) para solucionar esse problema caso não tenha solução analítica viável.
 
 * Solução
 
+
+** Representação
 As estruturas básicas para o algoritmo foram determinadas da seguinte forma: os genes são números reais e não precisam de nenhuma transformação para serem aplicados na equação eqref:eq:of, essa representação é, em comparação com o número de bits utilizado na outra representação do trabalho anterior, muito mais complexa em termos de quantidade de possíveis soluções (espaço de busca bem maior), claro que o espaço de busca poderia ser ainda maior com a representação por bits, porém em termos de eficiência na busca está implementação é mais efetiva. O espaço de busca continua sendo discreto porém bem maior do que com os números de bits utilizados no trabalho anterior. Como a linguagem utilizada foi Python e nessa linguagem o tipo de dado utilizado para representar um gene (o número real) foi o float. O float em Python é majoritariamente mapeado para IEEE-754 “precisão dupla” nas plataformas, inclusive a usada para fazer o experimento. 
+
+O problema foi modelado com 2 genes, ou seja, um vetor de 2 números reais, poderia ser maior porém seria mais custoso a execução completa do algoritmo.
+
+** Espaço de busca
 
 Para guiar a busca o estado de busca de soluções foi dentro do domínio $max_{value} = -2$ e $min_{value} = 2$ (i.e. $x \in [min_{value},max_{value}]$), isso por que foi analisado que dentro dessa espaço há bons valores para minimização da função e possivelmente a solução ótima do problema.
 
-O número de genes utilizado foi 2.
+** Seleção de pais
 
-A estratégia de seleção de pais utilizada foi a roleta, tal que um indivíduo é selecionado a partir de um procedimento que define uma probabilidade de ser escolhido para cada indivíduo com base em seu fitness e após isso um indivíduo é escolhido a partir desse conjunto de probabilidades. Para a atribuição das probabilidades é necessário transformar o fitness, pois como é um problema de minimização então os indíviduos com menores fitness devem ser os indíviduos mais priorizados, para isso cada fitness foi aplicado em $f(x) = 1/(x+\text{Menor float positivo da linguagem})$ após isso o conjunto de probabilidades é construido $\{\frac{f(x)}{\sum_{y\in fitnesses} f(y)}: x \in fitnesses \}$. 
 
-Para a intensificação do espaço de busca foi definido duas estratégias de cruzamento, sendo elas: $BLX\text{-}\alpha$ que sorteia um número aleatório de uma distribuição uniforme dentro de um intervalo que é delimitado a partir dos menores e maiores genes e variados a partir da diferença do produto da diferença dos genes dos pais com \alpha e esse intervalo é limitado pelo intervalo $[min_{value},max_{value}]$, ou seja, os valores não podem passar desses limites e se passam se transformam nos limites passados; $BLX\text{-}\alpha\beta$ que sorteia um número aleatório de uma distribuição uniforme dentro de um intervalo que varia dependendo de qual pai tem o maior gene assim o parâmetro $\beta$ limita o espaço de busca na direção do pior fitness e o $\alpha$ limita o espaço de busca na direção do melhor fitness, normalmente $\alpha>\beta$, e os intervalos também são limitados em $[min_{value},max_{value}]$.
+A estratégia de seleção de pais utilizada foi a roleta, tal que um indivíduo é selecionado a partir de um procedimento que define uma probabilidade de ser escolhido para cada indivíduo com base em seu fitness e após isso um indivíduo é escolhido a partir desse conjunto de probabilidades.
+
+Para a atribuição das probabilidades é necessário transformar o fitness, pois como é um problema de minimização então os indíviduos com menores fitness devem ser os indíviduos mais priorizados, para isso cada fitness foi aplicado em $f(x) = 1/(x+\text{Menor float positivo da linguagem})$ após isso o conjunto de probabilidades é construido $\{\frac{f(x)}{\sum_{y\in fitnesses} f(y)}: x \in fitnesses \}$. 
+
+** Cruzamento
+
+Para a intensificação do espaço de busca foi definido duas estratégias de cruzamento, sendo elas: 
+- $BLX\text{-}\alpha$ que sorteia um número aleatório de uma distribuição uniforme dentro de um intervalo que é delimitado a partir dos menores e maiores genes e variados a partir da diferença do produto da diferença dos genes dos pais com \alpha e esse intervalo é limitado pelo intervalo $[min_{value},max_{value}]$, ou seja, os valores não podem passar desses limites e se passam se transformam nos limites passados;
+- $BLX\text{-}\alpha\beta$ que sorteia um número aleatório de uma distribuição uniforme dentro de um intervalo que varia dependendo de qual pai tem o maior gene assim o parâmetro $\beta$ limita o espaço de busca na direção do pior fitness e o $\alpha$ limita o espaço de busca na direção do melhor fitness, normalmente $\alpha>\beta$, e os intervalos também são limitados em $[min_{value},max_{value}]$.
 
 Quando a taxa de cruzamento não é de 100% então indivíduos da população anterior são adicionados aleatoriamente a nova população até o limite de indivíduos.
 
+** Mutação
+
 Para mutação dos indivíduos foi utilizado um parâmetro de taxa de mutação que define a probabilidade de um indivíduo ser mutado. A mutação foi definida como o sorteio de um gene para ter o valor trocado através de outro sorteio de um valor dentro do intervalo $[min_{value},max_{value}]$.
 
+** Elitismo
+
 Para garantir uma curva de convergência sem oscilação e constante busca a melhorar os valores o elitismo foi aplicado e definido como a preservação do indivíduo com maior aptidão da população anterior, ele substitui um indivíduo aleatório da nova população. 
+
+** Parâmetros
 
 Os parâmetros mais relevantes são mostrados na tabela a seguir, através dele o algoritmo genético pode ser ajustado para obter boas soluções, fora as mudanças nos operadores de seleção (i.e., $BLX\text{-}\alpha$ e $BLX\text{-}\alpha\beta$), cruzamento e mutação (aqui, no caso, não foram estudadas outras variações).
 
@@ -172,6 +194,7 @@ Para começo da análise um experimento fatorial completo será realizado. Os va
 
 
 Depois da execução o top-25 de parâmetros são descritos na tabela ref:tbl:parameters, onde $\mu$ denota a média e $\sigma$ denota o desvio padrão das 10 execuções. Nessa tabela os dados são obtidos pela ultima geração de cada execução.
+** Análise do experimento fatorial
 
 É possível ver que diversos conjuntos de parâmetros conseguiram chegar na mesma melhor solução, isso mostra que diversas combinações de parâmetros são viáveis para otimização desse problema. Também é interessante notar que diversas execuções para um mesmo conjunto de parâmetros conseguiram chegar no mesmo resultado, assim obtendo um desvio padrão de 0 para diversas soluções, mostrando resultados bem consistentes.
 
@@ -227,51 +250,53 @@ Taxa de cruzamento & \rotatebox[origin=c]{45}{Elitismo} & Probabilidade de muta�
 
 #+end_export
 
-Também é importante analisar os parâmetros indivídualmente (suas execuções) para entender possíveis situações e seus comportamentos.
+** Análise das melhores soluções
+
+Também é importante analisar os parâmetros indivídualmente (suas execuções) para entender possíveis situações e seus comportamentos. Os parâmetros serão representados por uma tupla para identificação e os elementos estão na ordem das colunas da tabela.
 
 No gráfico a seguir (figura ref:fig:best_executions1) é possível observar que a alta probabilidade de mutação faz com que seja muito provavel que exista um indivíduo com uma aptidão muito ruim. Com um número maior de genes talvez esse peso na mutação de um só gene pode ser diluido e não haja tanta variação. Isso mostra que é importante utilizar a mediana como métrica de avaliação para saber o verdadeiro valor que descreve a maior parte dos indivíduos. As varias execuções possuem diferentes começos, algumas minimizam muito rapidamente inicialmente e outras não, porém além desse ponto é indistinguível.
 #+begin_export latex
-\begin{figure}[!htb]
+\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXab_selection_policy_Roulette_num_pop_100_num_generations_100_num_genes_2_cross_rate_0.8_elitism_False_mutation_rate_0.1_min_value_-2.0_max_value_2.0_eid_1_mean_and_median_and_best.eps}
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXab_selection_policy_Roulette_num_pop_100_num_generations_100_num_genes_2_cross_rate_0.8_elitism_False_mutation_rate_0.1_min_value_-2.0_max_value_2.0_eid_10_multiple_executions.eps}
+	\caption{Execução do melhor conjunto de parâmetros (0.8,False,0.10,$BLX\text{-}\alpha\beta$,100,100)}
 	\label{fig:best_executions1}
-	\caption{Execução do melhor parâmetro (0.8,False,0.10,$BLX\text{-}\alpha\beta$,100,100)}
 \end{figure}
 #+end_export
 
 Na figura ref:fig:best_executions2 é possível observar pela aptidão média e mediana que a população minimiza mais rapido com o $BLX\text{-}\alpha\beta$, isso é o efeito do parâmetro $\beta>\alpha$. Também como esperado e por muito pouco os valores no geral parecem convergir mais rápido para o mínimo.
 
 #+begin_export latex
-\begin{figure}[!htb]
+\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXa_selection_policy_Roulette_num_pop_100_num_generations_100_num_genes_2_cross_rate_0.8_elitism_False_mutation_rate_0.1_min_value_-2.0_max_value_2.0_eid_1_mean_and_median_and_best.eps}
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXa_selection_policy_Roulette_num_pop_100_num_generations_100_num_genes_2_cross_rate_0.8_elitism_False_mutation_rate_0.1_min_value_-2.0_max_value_2.0_eid_10_multiple_executions.eps}
+	\caption{Execução do melhor conjunto de parâmetros (0.8,False,0.10,$BLX\text{-}\alpha$,100,100)}
 	\label{fig:best_executions2}
-	\caption{Execução do melhor parâmetro (0.8,False,0.10,$BLX\text{-}\alpha$,100,100)}
 \end{figure}
 #+end_export
 
 Na figura ref:fig:best_executions3 e ref:fig:best_executions4 é possivel observar que com o elitismo a pior aptidão começa a não ter picos tão altos e a média começa a ficar bem mais estabilizada assim como a curva de melhor aptidão e as execuções estão bem mais parecidas umas com as outras. Em relação a variação do tamanho da população entre as duas figuras é notavel que a figura ref:fig:best_executions3 está mais estabilizada do que a figura ref:fig:best_executions4, porém como possue mais indivíduos então possui mais chance de mutação que causa picos na curva de pior aptidão, porém na média está bem melhor e mais estabilizado.
 
 #+begin_export latex
-\begin{figure}[!htb]
+\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXab_selection_policy_Roulette_num_pop_50_num_generations_100_num_genes_2_cross_rate_0.8_elitism_True_mutation_rate_0.1_min_value_-2.0_max_value_2.0_eid_1_mean_and_median_and_best.eps}
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXab_selection_policy_Roulette_num_pop_50_num_generations_100_num_genes_2_cross_rate_0.8_elitism_True_mutation_rate_0.1_min_value_-2.0_max_value_2.0_eid_10_multiple_executions.eps}
+	\caption{Execução do melhor conjunto de parâmetros (0.8,True,0.10,$BLX\text{-}\alpha\beta$,100,50)}
 	\label{fig:best_executions3}
-	\caption{Execução do melhor parâmetro (0.8,True,0.10,$BLX\text{-}\alpha\beta$,100,50)}
 \end{figure}
 #+end_export
 
 
 #+begin_export latex
-\begin{figure}[!htb]
+\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXab_selection_policy_Roulette_num_pop_100_num_generations_100_num_genes_2_cross_rate_0.8_elitism_True_mutation_rate_0.1_min_value_-2.0_max_value_2.0_eid_1_mean_and_median_and_best.eps}
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXab_selection_policy_Roulette_num_pop_100_num_generations_100_num_genes_2_cross_rate_0.8_elitism_True_mutation_rate_0.1_min_value_-2.0_max_value_2.0_eid_10_multiple_executions.eps}
+	\caption{Execução do melhor conjunto de parâmetros (0.8,True,0.10,$BLX\text{-}\alpha\beta$,100,100)}
 	\label{fig:best_executions4}
-	\caption{Execução do melhor parâmetro (0.8,True,0.10,$BLX\text{-}\alpha\beta$,100,100)}
 \end{figure}
 #+end_export
 
@@ -279,18 +304,117 @@ Na figura ref:fig:best_executions3 e ref:fig:best_executions4 é possivel observ
 Já na figura ref:fig:best_executions5 que a probabilidade de mutação é baixa e possue elitismo a pior aptidão se mantem muito mais baixa que nas outras abordagens, porém há uma grande variação pois esporadicamente cruzamentos ruins podem ser realizados e em certos momentos todos indivíduos estarem proximos da melhor aptidão.
 
 #+begin_export latex
-\begin{figure}[!htb]
+\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXab_selection_policy_Roulette_num_pop_100_num_generations_100_num_genes_2_cross_rate_1.0_elitism_True_mutation_rate_0.01_min_value_-2.0_max_value_2.0_eid_1_mean_and_median_and_best.eps}
 	\includegraphics[scale=0.5]{../img/mutation_policy_OneGene_cross_policy_BLXab_selection_policy_Roulette_num_pop_100_num_generations_100_num_genes_2_cross_rate_1.0_elitism_True_mutation_rate_0.01_min_value_-2.0_max_value_2.0_eid_10_multiple_executions.eps}
+	\caption{Execução do melhor conjunto de parâmetros (1.0,True,0.01,$BLX\text{-}\alpha\beta$,100,100)}
 	\label{fig:best_executions5}
-	\caption{Execução do melhor parâmetro (1.0,True,0.01,$BLX\text{-}\alpha\beta$,100,100)}
 \end{figure}
 #+end_export
 
+*** Análise detalhada de uma solução
+
+Para ter uma ideia de como o algoritmo está se comportando mais detalhadamente será feito a análise dos valores a cada geração atráves de uma tabela. Foi escolhido o parâmetro (1.0,True,0.01,$BLX\text{-}\alpha\beta$,50,50) por questão de espaço e também por possuir características de soluções ótimas.
+
+O primeiro ponto que se nota na execução, na tabela ref:tbl:execution, é que a convergência é consistente. A média possui grande pertubação ao longo do tempo e não é muito consistente, as vezes próxima do melhor indivíduo e as vezes muito longe. A mediana é muito mais robusta e permanece consistente.
+
+#+begin_export latex
+\begin{table}
+\footnotesize
+\center
+\caption{Execução do conjunto de parâmetros (1.0,True,0.01,$BLX\text{-}\alpha\beta$,50,50)}\label{tbl:execution}
+\begin{tabular}{rrrrr}
+Geração & Melhor aptidão & Aptidão média & Aptidão mediana & Pior aptidão\\
+1 & 3.03 & 5.737 & 5.922 & 7.774\\
+2 & 2.7 & 4.921 & 5.003 & 7.598\\
+3 & 1.355 & 4.357 & 4.212 & 7.542\\
+4 & 0.9532 & 4.16 & 4.094 & 7.453\\
+5 & 0.4438 & 3.26 & 3.252 & 6.557\\
+6 & 0.4438 & 2.698 & 2.808 & 6.572\\
+7 & 0.05584 & 1.456 & 1.223 & 6.475\\
+8 & 0.03137 & 0.8548 & 0.4438 & 5.768\\
+9 & 0.02333 & 0.2106 & 0.1202 & 1.005\\
+10 & 0.006422 & 0.2036 & 0.06973 & 4.418\\
+11 & 0.001464 & 0.04493 & 0.03404 & 0.3647\\
+12 & 0.0006806 & 0.0204 & 0.01673 & 0.05888\\
+13 & 0.0002826 & 0.06061 & 0.003686 & 2.795\\
+14 & 0.0001527 & 0.002015 & 0.0009366 & 0.02844\\
+15 & 4.531e-05 & 0.0006747 & 0.0004846 & 0.002932\\
+16 & 1.212e-05 & 0.09815 & 0.0002627 & 4.892\\
+17 & 6.287e-06 & 9.305e-05 & 4.95e-05 & 0.0006566\\
+18 & 1.183e-06 & 3.243e-05 & 2.314e-05 & 9.813e-05\\
+19 & 2.919e-07 & 1.215e-05 & 9.87e-06 & 5.692e-05\\
+20 & 1.318e-07 & 0.07487 & 1.728e-06 & 3.743\\
+21 & 1.068e-07 & 6.001e-07 & 3.196e-07 & 3.501e-06\\
+22 & 6.862e-08 & 0.0006822 & 2.023e-07 & 0.03409\\
+23 & 1.097e-08 & 0.03735 & 1.584e-07 & 1.868\\
+24 & 7.703e-09 & 1.036e-07 & 8.475e-08 & 3.687e-07\\
+25 & 3.937e-09 & 4.251e-08 & 3.559e-08 & 1.528e-07\\
+26 & 1.466e-09 & 0.005874 & 8.875e-09 & 0.2937\\
+27 & 9.642e-10 & 0.07869 & 4.483e-09 & 3.935\\
+28 & 6.333e-10 & 3.304e-09 & 2.914e-09 & 1.186e-08\\
+29 & 2.241e-10 & 2.449e-09 & 1.803e-09 & 8.26e-09\\
+30 & 1.979e-10 & 1.315e-09 & 1.038e-09 & 4.441e-09\\
+31 & 1.43e-10 & 0.05931 & 3.948e-10 & 2.965\\
+32 & 6.977e-11 & 0.09286 & 2.26e-10 & 4.643\\
+33 & 4.417e-11 & 2.183e-10 & 2.154e-10 & 6.029e-10\\
+34 & 1.2e-11 & 1.676e-10 & 1.509e-10 & 7.18e-10\\
+35 & 1.2e-11 & 0.06896 & 9.304e-11 & 3.448\\
+36 & 1.2e-11 & 5.623e-11 & 4.657e-11 & 1.592e-10\\
+37 & 2.989e-13 & 0.08737 & 2.948e-11 & 4.369\\
+38 & 2.989e-13 & 7.709e-12 & 3.423e-12 & 4.182e-11\\
+39 & 2.989e-13 & 3.393e-13 & 2.989e-13 & 1.784e-12\\
+40 & 2.989e-13 & 0.09909 & 2.989e-13 & 4.954\\
+41 & 2.989e-13 & 2.989e-13 & 2.989e-13 & 2.989e-13\\
+42 & 2.989e-13 & 2.989e-13 & 2.989e-13 & 2.989e-13\\
+43 & 2.989e-13 & 2.989e-13 & 2.989e-13 & 2.989e-13\\
+44 & 2.989e-13 & 2.989e-13 & 2.989e-13 & 2.989e-13\\
+45 & 2.989e-13 & 2.989e-13 & 2.989e-13 & 2.989e-13\\
+46 & 2.989e-13 & 0.02359 & 2.989e-13 & 1.18\\
+47 & 2.989e-13 & 0.0516 & 2.989e-13 & 2.58\\
+48 & 2.989e-13 & 2.989e-13 & 2.989e-13 & 2.989e-13\\
+49 & 2.989e-13 & 0.06502 & 2.989e-13 & 3.251\\
+50 & 2.989e-13 & 2.989e-13 & 2.989e-13 & 2.989e-13\\
+\end{tabular}
+\end{table}
+#+end_export
+
+
+# \begin{tabular}{lrrr}
+# Month & \multicolumn{1}{c}{Days} & Nr.\ sold & per day\\
+# % BEGIN RECEIVE ORGTBL salesfigures
+# % END RECEIVE ORGTBL salesfigures
+# \end{tabular}
+# %
+# \begin{comment}
+# #+ORGTBL: SEND salesfigures orgtbl-to-latex :splice t :skip 2
+# | Month | Days | Nr sold | per day |
+# |-------+------+---------+---------|
+# | Jan   |   23 |      55 |     2.4 |
+# | Feb   |   21 |      16 |     0.8 |
+# | March |   22 |     278 |    12.6 |
+# #+TBLFM: $4=$3/$2;%.1f
+# \end{comment}
+
+# \begin{tabular}{lrrr}
+# Month & \multicolumn{1}{c}{Days} & Nr.\ sold & per day\\
+# % BEGIN RECEIVE ORGTBL salesfigures
+# % END RECEIVE ORGTBL salesfigures
+# \end{tabular}
+# %
+# \begin{comment}
+# #+ORGTBL: SEND salesfigures orgtbl-to-latex
+# #+EXPORT: table2.org
+# \end{comment}
+
 * Conclusão
 
-Com esse trabalho foi possível fazer a análise detalhada do comportamento de um modelo de algoritmo genético. Atráves de multiplos gráficos os parâmetros do modelo foram análisados. Como o problema a ser tratado é bem simples o algoritmo majoritariamente consegue achar o ponto ótimo do domínio.
+Com esse trabalho foi possível fazer a análise detalhada do comportamento de um modelo de algoritmo genético. Atráves de multiplos gráficos os parâmetros do modelo foram análisados. Como o problema a ser tratado é bem simples o algoritmo majoritariamente consegue achar o ponto ótimo do domínio, porém é interessante ver que mesmo com o espaço de busca foi bem maior em relação ao trabalho com a representação binária a convergência (para a solução ótima) foi mais rápida (nos casos que a representação binária utiliza muitos bits). 
+
+Com a representação real também foi possível ter mais métodos para intensificar a busca, como por exemplo nos operadores de cruzamentos ($BLX\text{-}\alpha$ e $BLX\text{-}\alpha\beta$), que são métodos que apresentam uma busca consistente em direção a bons indivíduos, com a representação binária o cruzamento era mais cego e não conseguia direcionar a busca com mais objetivo.
+
+
 
 bibliography:doc.bib
 bibliographystyle:plain

@@ -5,7 +5,7 @@ cross_policy:
     alpha: 0.75
     beta: 0.25
 general:
-  print_table: False
+  print_table: True
 parameters:
   mutation_policy:
     default: "OneGene"
@@ -17,16 +17,16 @@ parameters:
     default: "Roulette"
     pretty_name: "Selection Policy"
   num_pop:
-    default: 100 # Population size
+    default: 50 # Population size
     pretty_name: "#Population"
   num_generations: 
-    default: 100 # Number of generations
+    default: 50 # Number of generations
     pretty_name: "#Generations"
   num_genes:
     default: 2 # Number of genes
     pretty_name: "#Genes"
   cross_rate:
-    default: 0.6 # Rate of individuals who are going to be crossed instead of being preserved from previous generation, commonly it is going to stay in 1.0 but to be more flexible it is presented as a variable
+    default: 1.0 # Rate of individuals who are going to be crossed instead of being preserved from previous generation, commonly it is going to stay in 1.0 but to be more flexible it is presented as a variable
     pretty_name: "Cross rate"
   elitism: 
     default: True
