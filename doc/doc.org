@@ -254,7 +254,7 @@ Taxa de cruzamento & \rotatebox[origin=c]{45}{Elitismo} & Probabilidade de muta�
 
 Também é importante analisar os parâmetros indivídualmente (suas execuções) para entender possíveis situações e seus comportamentos. Os parâmetros serão representados por uma tupla para identificação e os elementos estão na ordem das colunas da tabela.
 
-No gráfico a seguir (figura ref:fig:best_executions1) é possível observar que a alta probabilidade de mutação faz com que seja muito provavel que exista um indivíduo com uma aptidão muito ruim. Com um número maior de genes talvez esse peso na mutação de um só gene pode ser diluido e não haja tanta variação. Isso mostra que é importante utilizar a mediana como métrica de avaliação para saber o verdadeiro valor que descreve a maior parte dos indivíduos. As varias execuções possuem diferentes começos, algumas minimizam muito rapidamente inicialmente e outras não, porém além desse ponto é indistinguível.
+No gráfico a seguir (figura ref:fig:best_executions1) é possível observar que a alta probabilidade de mutação faz com que seja muito provável que exista um indivíduo com uma aptidão muito ruim. Com um número maior de genes talvez esse peso na mutação de um só gene pode ser diluido e não haja tanta variação. Isso mostra que é importante utilizar a mediana como métrica de avaliação para saber o verdadeiro valor que descreve a maior parte dos indivíduos. As varias execuções possuem diferentes começos, algumas minimizam muito rapidamente inicialmente e outras não, porém além desse ponto é indistinguível.
 #+begin_export latex
 \begin{figure}[H]
 	\centering
@@ -318,6 +318,8 @@ Já na figura ref:fig:best_executions5 que a probabilidade de mutação é baixa
 Para ter uma ideia de como o algoritmo está se comportando mais detalhadamente será feito a análise dos valores a cada geração atráves de uma tabela. Foi escolhido o parâmetro (1.0,True,0.01,$BLX\text{-}\alpha\beta$,50,50) por questão de espaço e também por possuir características de soluções ótimas.
 
 O primeiro ponto que se nota na execução, na tabela ref:tbl:execution, é que a convergência é consistente. A média possui grande pertubação ao longo do tempo e não é muito consistente, as vezes próxima do melhor indivíduo e as vezes muito longe. A mediana é muito mais robusta e permanece consistente.
+
+É possível ver também que nessa execução após a geração 37 o algoritmo ficou em uma situação que não conseguia melhorar a solução e enquanto isso mais indivíduos são mutados para diversificar a população, pois ficou muito estável.
 
 #+begin_export latex
 \begin{table}
@@ -413,6 +415,10 @@ Geração & Melhor aptidão & Aptidão média & Aptidão mediana & Pior aptidão
 Com esse trabalho foi possível fazer a análise detalhada do comportamento de um modelo de algoritmo genético. Atráves de multiplos gráficos os parâmetros do modelo foram análisados. Como o problema a ser tratado é bem simples o algoritmo majoritariamente consegue achar o ponto ótimo do domínio, porém é interessante ver que mesmo com o espaço de busca foi bem maior em relação ao trabalho com a representação binária a convergência (para a solução ótima) foi mais rápida (nos casos que a representação binária utiliza muitos bits). 
 
 Com a representação real também foi possível ter mais métodos para intensificar a busca, como por exemplo nos operadores de cruzamentos ($BLX\text{-}\alpha$ e $BLX\text{-}\alpha\beta$), que são métodos que apresentam uma busca consistente em direção a bons indivíduos, com a representação binária o cruzamento era mais cego e não conseguia direcionar a busca com mais objetivo.
+
+Outro ponto também é que na representação binária a seleção de pais realizada era era mais aleatória que voltada para uma intensificação na busca (priorizar os melhores) comparada ao método utilizado agora de roleta.
+
+Um ponto que a representação real não apresenta é a separação de um gene em partes, porém de certa forma tenta fazer isso através de um intervalo de busca. É interessante notar que se a representação binária fosse transformada de volta em um número real poderia ser aplicado todos métodos apresentados aqui, porém com um espaço de busca variável, mas teria o custo nas transformações de bases.
 
 
 
